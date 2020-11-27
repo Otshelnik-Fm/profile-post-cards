@@ -2,8 +2,6 @@
     box-sizing: border-box;
     line-height: normal;
     margin: 24px 0 6px;
-}
-.ppc_content_box {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
@@ -69,15 +67,30 @@
     background-color: #1f5f96;
     color: #bae1ea;
 }
-.ppc_edit {
-    background-color: rgba(0, 0, 0, .7);
-    color: #ddd;
+.ppc_flight {
     position: absolute;
     right: 6px;
     top: 6px;
+    display: flex;
+    align-items: center;
+}
+.ppc_flight .ppc_edit {
+    background-color: rgba(0, 0, 0, .6);
+    color: #ddd;
     line-height: normal;
     display: flex;
     padding: 6px 9px;
+    margin: 0 0 0 3px;
+    transition: all .2s ease-in;
+}
+.ppc_flight .ppc_edit .rcli {
+    font-size: 18px;
+    padding: 0;
+}
+.ppc_flight .ppc_edit .rcli:hover,
+.ppc_flight .ppc_edit:hover {
+    color: #fff;
+    background: rgba(0, 0, 0, .9);
 }
 #ppc_wrapper .ppc_img img {
     border-radius: 0;
@@ -103,12 +116,13 @@
 .ppc_footer {
     align-items: center;
     border-top: 1px solid #e5e5e5;
-    color: #777;
+    color: #757575;
     display: flex;
     justify-content: space-between;
-    line-height: normal;
+    line-height: 130%;
     padding: 6px 12px;
     width: 100%;
+    flex-wrap: wrap;
 }
 .ppc_item:hover .ppc_footer {
     border-top-color: orange;

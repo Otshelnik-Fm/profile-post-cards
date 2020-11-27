@@ -33,7 +33,7 @@ function ppc_get_image( $post_id, $title ) {
     $img_data = image_downsize( $img_id, 'medium' );
     $img      = ( ! empty( $img_data ) ) ? $img_data[0] : rcl_get_option( 'ppc_img' );
 
-    return '<img alt="' . $title . '" src="' . $img . '">';
+    return '<img loading="lazy" alt="' . $title . '" src="' . $img . '">';
 }
 
 function ppc_get_post_title_link( $post_id, $title, $post_status ) {
@@ -66,7 +66,7 @@ function ppc_get_comment( $comment_status, $comment_count ) {
     if ( $comment_status != 'open' )
         return;
 
-    $out = '<span class="ppc_comment">';
+    $out = '<span class="ppc_comment" title="Комментариев">';
     $out .= '<i class="rcli fa-comments-o" aria-hidden="true"></i>';
     $out .= '<span class="comment-value">' . $comment_count . '</span>';
     $out .= '</span>';
@@ -80,7 +80,7 @@ function ppc_get_rating( $post_id, $ratings ) {
 
     $rtng = (isset( $ratings[$post_id] )) ? $ratings[$post_id] : 0;
 
-    $out = '<span class="ppc_rating">';
+    $out = '<span class="ppc_rating" title="Рейтинг">';
     $out .= '<i class="rcli fa-heartbeat" aria-hidden="true"></i>';
     $out .= '<span class="rating-value">' . rcl_format_rating( $rtng ) . '</span>';
     $out .= '</span>';
@@ -103,13 +103,14 @@ function ppc_status( $post_status ) {
     return $status;
 }
 
-function ppc_edit_author_link( $post ) {
+add_action( 'ppc_flight_icons', 'ppc_edit_author_link', 10, 3 );
+function ppc_edit_author_link( $post_id, $post_status, $post ) {
     if ( ! is_user_logged_in() )
         return;
 
     global $user_ID;
 
-    if ( rcl_is_office( $user_ID ) || current_user_can( 'edit_post', $post->ID ) ) {
+    if ( rcl_is_office( $user_ID ) || current_user_can( 'edit_post', $post_id ) ) {
         if ( rcl_get_option( 'ppc_edit', 'no' ) === 'no' )
             return;
 
@@ -130,13 +131,29 @@ function ppc_edit_author_link( $post ) {
             if ( $ppc_user_info->user_level < 10 && rcl_is_limit_editing( $post->post_date ) )
                 return;
 
-            $url = get_edit_post_link( $post->ID );
+            $content = '<a href="' . get_edit_post_link( $post_id ) . '" class="ppc_edit" title="Редактировать">';
+            $content .= '<i class="rcli fa-pencil" aria-hidden="true"></i>';
+            $content .= '</a>';
 
-            $out = '<a href="' . $url . '" class="ppc_edit" title="Редактировать">';
-            $out .= '<i class="rcli fa-pencil" aria-hidden="true"></i>';
-            $out .= '</a>';
-
-            return $out;
+            echo $content;
         }
     }
+}
+
+// поддержка universe activity modal
+add_action( 'ppc_flight_icons', 'ppc_get_post_modal_una', 10, 2 );
+function ppc_get_post_modal_una( $post_id, $post_status ) {
+    if ( ! function_exists( 'unam_shortcode' ) )
+        return;
+
+    if ( $post_status != 'publish' )
+        return;
+
+    $atts = [
+        'id'    => $post_id,
+        'text'  => '',
+        'class' => 'unam_simple ppc_edit',
+        'icon'  => 'fa-clone',
+    ];
+    echo unam_shortcode( $atts );
 }
